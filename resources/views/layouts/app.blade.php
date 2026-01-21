@@ -27,10 +27,16 @@
                 </header>
             @endisset
 
-            <!-- Page Content -->
-         <main class="max-w-4xl mx-auto px-4 py-6">
-            @yield('content')
-        </main>
+            <main class="max-w-4xl mx-auto px-4 py-6">
+                {{-- Suporte a Breeze / Components --}}
+                @isset($slot)
+                    {{ $slot }}
+                @endisset
+            
+                {{-- Suporte a views clássicas --}}
+                @yield('content')
+            </main>
+
         </div>
     </body>
 </html>

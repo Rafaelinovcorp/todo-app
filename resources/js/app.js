@@ -1,4 +1,6 @@
 import './bootstrap';
+import './tasks';
+import './tasks-create';
 
 import Alpine from 'alpinejs';
 
