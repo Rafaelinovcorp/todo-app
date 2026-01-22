@@ -14,7 +14,7 @@ return new class extends Migration
     Schema::create('tasks', function (Blueprint $table) {
         $table->id();
 
-        // Owner da tarefa 
+       
         $table->foreignId('user_id')
               ->constrained()
               ->cascadeOnDelete();

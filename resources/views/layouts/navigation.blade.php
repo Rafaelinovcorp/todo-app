@@ -11,14 +11,22 @@
                 </div>
 
                 <!-- Navigation Links -->
-                <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
-                    <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
-                        {{ __('Dashboard') }}
-                    </x-nav-link>
+                <div class="shrink-0 flex items-center">
+                    <a href="{{ route('dashboard') }}" class="flex items-center gap-2">
+                        <svg class="h-7 w-7 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                  d="M9 12l2 2 4-4m5 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                
+                        <span class="font-semibold text-gray-800">
+                            To-Do App
+                        </span>
+                    </a>
                 </div>
+
             </div>
 
-            <!-- Settings Dropdown -->
+
             <div class="hidden sm:flex sm:items-center sm:ms-6">
                 <x-dropdown align="right" width="48">
                     <x-slot name="trigger">

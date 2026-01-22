@@ -102,7 +102,26 @@
                     <option value="low">Baixa</option>
                     <option value="high">Alta</option>
                 </select>
+                
             </div>
+                        <div class="mb-6">
+                <label class="block mb-1 font-medium">
+                    Lista
+                </label>
+
+                <select name="list_id"
+                        class="w-full border rounded px-3 py-2">
+                    <option value="">Sem lista</option>
+
+                    @foreach ($lists as $list)
+                        <option value="{{ $list->id }}"
+                            {{ old('list_id') == $list->id ? 'selected' : '' }}>
+                            {{ $list->name }}
+                        </option>
+                    @endforeach
+                </select>
+            </div>
+
 
             <div class="flex justify-end gap-2">
                 <a href="{{ route('tasks.index') }}"

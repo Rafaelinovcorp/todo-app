@@ -4,22 +4,50 @@ namespace App\Http\Controllers;
 
 use App\Models\Task;
 use Illuminate\Http\Request;
+use App\Models\TaskList;
 
 class TaskController extends Controller
 {
-    public function index()
+public function index(Request $request)
 {
-    $tasks = Task::where('user_id', auth()->id())
+    $userId = auth()->id();
+
+    // 🔹 Listas do utilizador (sidebar)
+    $lists = TaskList::where('user_id', $userId)
+        ->orderBy('name')
+        ->get();
+
+    // 🔹 Query base das tarefas pendentes
+    $pendingQuery = Task::where('user_id', $userId)
         ->where('status', 'pending')
-        ->orderBy('created_at', 'desc')
-        ->get();
+        ->orderBy('created_at', 'desc');
 
-    $completedTasks = Task::where('user_id', auth()->id())
+    // 🔹 Query base das tarefas concluídas
+    $completedQuery = Task::where('user_id', $userId)
         ->where('status', 'completed')
-        ->orderBy('updated_at', 'desc')
-        ->get();
+        ->orderBy('updated_at', 'desc');
 
-    return view('tasks.index', compact('tasks', 'completedTasks'));
+    // 🔹 Filtro por lista (aplica às duas)
+    if ($request->filled('list')) {
+        $listId = $request->get('list');
+
+        $pendingQuery->whereHas('lists', function ($q) use ($listId) {
+            $q->where('task_lists.id', $listId);
+        });
+
+        $completedQuery->whereHas('lists', function ($q) use ($listId) {
+            $q->where('task_lists.id', $listId);
+        });
+    }
+
+    $tasks = $pendingQuery->get();
+    $completedTasks = $completedQuery->get();
+
+    return view('tasks.index', compact(
+        'tasks',
+        'completedTasks',
+        'lists'
+    ));
 }
 
 
@@ -32,7 +60,11 @@ class TaskController extends Controller
 
     public function create()
     {
-        return view('tasks.create');
+        $lists = TaskList::where('user_id', auth()->id())
+            ->orderBy('name')
+            ->get();
+
+        return view('tasks.create', compact('lists'));
     }
 
     public function complete(Task $task)
@@ -103,54 +135,57 @@ class TaskController extends Controller
 
 
     public function store(Request $request)
-    {
-        $validated = $request->validate([
-            'title' => ['required', 'string', 'max:255'],
-            'description' => ['nullable', 'string'],
+{
+    $validated = $request->validate([
+        'title' => ['required', 'string', 'max:255'],
+        'description' => ['nullable', 'string'],
+        'due_date' => ['nullable', 'date', 'after_or_equal:today'],
+        'start_time' => ['nullable', 'date_format:H:i'],
+        'end_time' => ['nullable', 'date_format:H:i'],
+        'priority' => ['required', 'in:low,medium,high'],
+        'list_id' => ['nullable', 'exists:task_lists,id'],
+    ]);
 
-            'due_date' => ['nullable', 'date', 'after_or_equal:today'],
-
-            'start_time' => ['nullable', 'date_format:H:i'],
-            'end_time' => ['nullable', 'date_format:H:i'],
-
-            'priority' => ['required', 'in:low,medium,high'],
-        ]);
-
-      
-
-    
-        if (($validated['start_time'] ?? null || $validated['end_time'] ?? null)
-            && empty($validated['due_date'])) {
-            return back()
-                ->withErrors(['due_date' => 'A data é obrigatória quando define uma hora.'])
-                ->withInput();
-        }
-
-     
-        if (!empty($validated['end_time']) && empty($validated['start_time'])) {
-            return back()
-                ->withErrors(['start_time' => 'A hora de início é obrigatória quando define uma hora de fim.'])
-                ->withInput();
-        }
-
-        
-        if (!empty($validated['start_time']) && !empty($validated['end_time'])) {
-            if ($validated['end_time'] <= $validated['start_time']) {
-                return back()
-                    ->withErrors(['end_time' => 'A hora de fim deve ser maior que a hora de início.'])
-                    ->withInput();
-            }
-        }
-
-        $validated['user_id'] = auth()->id();
-        $validated['status'] = 'pending';
-
-        Task::create($validated);
-
-        return redirect()
-            ->route('tasks.index')
-            ->with('success', 'Tarefa criada com sucesso.');
+    // validações de hora (mantidas)
+    if (($validated['start_time'] ?? null || $validated['end_time'] ?? null)
+        && empty($validated['due_date'])) {
+        return back()->withErrors([
+            'due_date' => 'A data é obrigatória quando define uma hora.'
+        ])->withInput();
     }
+
+    if (!empty($validated['end_time']) && empty($validated['start_time'])) {
+        return back()->withErrors([
+            'start_time' => 'A hora de início é obrigatória quando define uma hora de fim.'
+        ])->withInput();
+    }
+
+    if (!empty($validated['start_time']) && !empty($validated['end_time'])) {
+        if ($validated['end_time'] <= $validated['start_time']) {
+            return back()->withErrors([
+                'end_time' => 'A hora de fim deve ser maior que a hora de início.'
+            ])->withInput();
+        }
+    }
+
+    $validated['user_id'] = auth()->id();
+    $validated['status'] = 'pending';
+
+  
+    $task = Task::create($validated);
+
+
+    if (!empty($validated['list_id'])) {
+        $task->lists()->attach($validated['list_id']);
+    }
+
+    return redirect()
+        ->route('tasks.index', [
+            'list' => $validated['list_id'] ?? null
+        ])
+        ->with('success', 'Tarefa criada com sucesso.');
+}
+
 
     public function toggleStatus(Task $task)
     {

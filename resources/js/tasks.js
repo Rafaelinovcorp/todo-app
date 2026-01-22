@@ -274,6 +274,81 @@ function ordenarPorData() {
 }
 
 
+function abrirModalLista() {
+    document.getElementById('modalNovaLista')?.classList.remove('hidden');
+    document.getElementById('modalNovaLista')?.classList.add('flex');
+}
+
+function fecharModalLista() {
+    document.getElementById('modalNovaLista')?.classList.add('hidden');
+    document.getElementById('modalNovaLista')?.classList.remove('flex');
+}
+
+function abrirEditarLista(id, nome) {
+    document.getElementById('editListName').value = nome;
+    document.getElementById('formEditarLista').action = `/task-lists/${id}`;
+    document.getElementById('modalEditarLista').classList.remove('hidden');
+    document.getElementById('modalEditarLista').classList.add('flex');
+}
+
+function fecharEditarLista() {
+    document.getElementById('modalEditarLista').classList.add('hidden');
+}
+
+function abrirApagarLista(id) {
+    document.getElementById('formApagarLista').action = `/task-lists/${id}`;
+    document.getElementById('modalApagarLista').classList.remove('hidden');
+    document.getElementById('modalApagarLista').classList.add('flex');
+}
+
+function fecharApagarLista() {
+    document.getElementById('modalApagarLista').classList.add('hidden');
+}
+
+function fecharApagarListaPorOverlay(event) {
+    const modal = document.getElementById('modalApagarListaConteudo');
+    if (modal && !modal.contains(event.target)) {
+        fecharApagarLista();
+    }
+}
+
+function fecharEditarListaPorOverlay(event) {
+    const modal = document.getElementById('modalEditarListaConteudo');
+    if (modal && !modal.contains(event.target)) {
+        fecharEditarLista();
+    }
+}
+
+function fecharNovaListaPorOverlay(event) {
+    const modal = document.getElementById('modalNovaListaConteudo');
+    if (modal && !modal.contains(event.target)) {
+        fecharModalLista();
+    }
+}
+function toggleSidebar() {
+    const sidebar = document.getElementById('sidebar');
+    const overlay = document.getElementById('sidebarOverlay');
+
+    sidebar.classList.toggle('-translate-x-full');
+    overlay.classList.toggle('hidden');
+}
+
+
+window.fecharApagarListaPorOverlay = fecharApagarListaPorOverlay;
+window.fecharEditarListaPorOverlay = fecharEditarListaPorOverlay;
+window.fecharNovaListaPorOverlay = fecharNovaListaPorOverlay;
+
+window.fecharEditarLista = fecharEditarLista;
+window.fecharApagarLista = fecharApagarLista;
+
+
+window.abrirEditarLista = abrirEditarLista;
+window.abrirApagarLista = abrirApagarLista;
+
+
+window.abrirModalLista = abrirModalLista;
+window.fecharModalLista = fecharModalLista;
+
 
 window.abrirInfo = abrirInfo;
 window.fecharInfo = fecharInfo;

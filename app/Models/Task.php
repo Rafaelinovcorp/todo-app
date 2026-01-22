@@ -21,11 +21,12 @@ class Task extends Model
     'user_id',
     ];
 
-    //dono da tarefas partilha
-    public function owner()
+    public function lists()
     {
-        return $this->belongsTo(User::class, 'user_id');
+        return $this->belongsToMany(TaskList::class, 'list_task');
     }
+
+
 
     public function getColorClassAttribute(): string
     {

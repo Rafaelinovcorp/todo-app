@@ -3,6 +3,7 @@
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\TaskController;
+use App\Http\Controllers\TaskListController;
 
 //route Welcome
 Route::get('/', function () {
@@ -48,7 +49,14 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::delete('/tasks/{task}', [TaskController::class, 'destroy'])
         ->name('tasks.destroy');
 
+    Route::post('/task-lists', [TaskListController::class, 'store'])
+        ->name('task-lists.store'); 
+        
+    Route::put('/task-lists/{taskList}', [TaskListController::class, 'update'])
+        ->name('task-lists.update');
     
+    Route::delete('/task-lists/{taskList}', [TaskListController::class, 'destroy'])
+        ->name('task-lists.destroy');
 });
 
 
