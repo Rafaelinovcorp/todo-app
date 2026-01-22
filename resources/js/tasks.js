@@ -200,6 +200,7 @@ async function toggleTask(id, checkbox) {
 /* =========================
    DELETE
    ========================= */
+
 let taskParaEliminar = null;
 
 async function confirmarDelete() {
@@ -221,6 +222,58 @@ async function confirmarDelete() {
         alert('Erro ao eliminar tarefa.');
     }
 }
+
+/* =========================
+   DELETE MODAL
+   ========================= */
+
+async function abrirDelete(id) {
+    taskParaEliminar = id;
+
+    try {
+        const response = await fetch(`/tasks/${id}/info`);
+        if (!response.ok) throw new Error();
+
+        const tarefa = await response.json();
+
+        // Preencher dados no modal
+        const tituloEl = document.getElementById('deleteTaskTitulo');
+        if (tituloEl) {
+            tituloEl.innerText = tarefa.title;
+        }
+
+        // Abrir modal
+        const modal = document.getElementById('tarefaDeleteModal');
+        if (!modal) return;
+
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+
+    } catch {
+        alert('Não foi possível carregar a tarefa.');
+    }
+}
+
+
+function fecharDelete() {
+    const modal = document.getElementById('tarefaDeleteModal');
+    if (!modal) return;
+
+    modal.classList.add('hidden');
+    modal.classList.remove('flex');
+
+    taskParaEliminar = null;
+}
+
+function fecharDeletePorOverlay(event) {
+    const conteudo = document.getElementById('tarefaDeleteConteudo');
+    if (conteudo && !conteudo.contains(event.target)) {
+        fecharDelete();
+    }
+}
+
+
+
 
 
 /* =========================
@@ -254,7 +307,7 @@ function limparFiltros() {
 }
 
 function ordenarPorData() {
-    const lista = document.querySelector('ul.divide-y');
+    const lista = document.getElementById('listaTarefas');
     if (!lista) return;
 
     const tarefas = Array.from(lista.querySelectorAll('.task-item'));
@@ -272,6 +325,7 @@ function ordenarPorData() {
 
     tarefas.forEach(task => lista.appendChild(task));
 }
+
 
 
 function abrirModalLista() {
@@ -366,3 +420,9 @@ window.limparFiltros = limparFiltros;
 
 window.ordenarPorData = ordenarPorData;
 window.confirmarDelete = confirmarDelete;
+
+window.abrirDelete = abrirDelete;
+window.fecharDelete = fecharDelete;
+window.fecharDeletePorOverlay = fecharDeletePorOverlay;
+window.confirmarDelete = confirmarDelete;
+

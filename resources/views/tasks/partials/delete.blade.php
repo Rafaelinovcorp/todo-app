@@ -1,25 +1,22 @@
 <div
-    id="deleteTaskModal"
-    class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden"
+    id="tarefaDeleteModal"
+    class="fixed inset-0 bg-black/50 hidden items-center justify-center z-50"
     onclick="fecharDeletePorOverlay(event)"
 >
     <div
-        id="deleteTaskConteudo"
+        id="tarefaDeleteConteudo"
         class="bg-white rounded-lg shadow-lg p-6 w-full max-w-md"
     >
         <h2 class="text-lg font-semibold text-red-600 mb-4">
             Eliminar tarefa
         </h2>
 
-        <p class="mb-2 text-gray-700">
+        <p class="mb-4 text-gray-700">
             Tens a certeza que queres eliminar esta tarefa?
         </p>
 
-        {{-- DADOS DA TAREFA --}}
         <div class="bg-gray-100 rounded p-3 mb-4 text-sm">
-            <p><strong>Título:</strong> <span id="deleteTaskTitulo"></span></p>
-            <p><strong>Prioridade:</strong> <span id="deleteTaskPrioridade"></span></p>
-            <p><strong>Concluída em:</strong> <span id="deleteTaskData"></span></p>
+            <p><strong>Título:</strong> <span id="deleteTaskTitulo">—</span></p>
         </div>
 
         <div class="flex justify-end gap-3">

@@ -101,7 +101,7 @@
             @if ($tasks->isEmpty())
                 <p class="text-gray-500">Ainda não tens tarefas pendentes.</p>
             @else
-                <ul class="space-y-3">
+               <ul id="listaTarefas" class="space-y-3">
                     @foreach ($tasks as $task)
                         @php
                             if ($task->due_date && Carbon::parse($task->due_date)->isPast()) {
