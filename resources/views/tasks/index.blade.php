@@ -7,7 +7,8 @@
     use Carbon\Carbon;
 @endphp
 
-<div class="flex h-full w-full">
+<div class="flex flex-1 w-full">
+
 
     {{-- SIDEBAR ESQUERDA --}}
     @include('tasks.partials._sidebar_lists')
